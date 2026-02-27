@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import { Button } from '@/components/livekit/button';
 
 interface AuthViewProps {
   onAuthenticated: (clientName: string) => void;
@@ -22,14 +21,8 @@ export const AuthView = ({ onAuthenticated, ref }: React.ComponentProps<'div'> &
     try {
       const response = await fetch('/api/auth', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          username,
-          password,
-          clientName,
-        }),
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, password, clientName }),
       });
 
       const data = await response.json();
@@ -50,29 +43,28 @@ export const AuthView = ({ onAuthenticated, ref }: React.ComponentProps<'div'> &
   return (
     <div
       ref={ref}
-      className="fixed inset-0 h-full w-full bg-cover bg-center bg-no-repeat"
-      style={{ backgroundImage: "url('/welcome-bg-4.jpg')" }}
+      className="fixed inset-0 h-full w-full bg-[#edf5fa] flex flex-col items-center justify-center px-4"
     >
-      {/* Semi-transparent overlay */}
-      <div className="absolute inset-0 bg-black/30" />
-
-      <section className="relative z-10 flex h-full flex-col items-center justify-center px-4">
-        <div className="w-full max-w-md rounded-2xl bg-white/95 p-8 shadow-2xl backdrop-blur-sm dark:bg-slate-800/95">
-          <div className="mb-6 text-center">
-            <h2 className="font-beachday text-3xl font-bold text-slate-800 dark:text-white">
-              Welcome!
+      <section className="relative z-10 flex h-full flex-col items-center justify-center w-full">
+        <div className="w-full max-w-md rounded-2xl bg-white p-8 shadow-2xl border border-gray-100">
+          
+          <div className="mb-8 flex flex-col items-center text-center">
+            <img 
+              src="https://customer.health4travel.com/static/media/h4tLogo.3b3f9bb3bc531faa471910633d743d52.svg" 
+              alt="Health4Travel Logo" 
+              className="h-10 mb-4" 
+            />
+            <h2 className="text-2xl font-bold text-[#183a59]">
+              Smart Clinic Portal
             </h2>
-            <p className="mt-2 text-sm text-slate-600 dark:text-slate-300">
-              Please sign in to continue
+            <p className="mt-2 text-sm text-gray-500">
+              Please sign in to access your AI Assistant
             </p>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-5">
             <div>
-              <label
-                htmlFor="username"
-                className="block text-sm font-medium text-slate-700 dark:text-slate-300"
-              >
+              <label htmlFor="username" className="block text-xs font-bold text-[#183a59] uppercase tracking-wider mb-1">
                 Username
               </label>
               <input
@@ -81,16 +73,13 @@ export const AuthView = ({ onAuthenticated, ref }: React.ComponentProps<'div'> &
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 required
-                className="mt-1 block w-full rounded-lg border border-slate-300 bg-white px-4 py-2 text-slate-900 shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none dark:border-slate-600 dark:bg-slate-700 dark:text-white"
+                className="block w-full rounded-xl border border-gray-300 bg-gray-50 px-4 py-3 text-gray-900 focus:border-[#183a59] focus:ring-2 focus:ring-[#edf5fa] focus:bg-white outline-none transition-all"
                 placeholder="Enter your username"
               />
             </div>
 
             <div>
-              <label
-                htmlFor="password"
-                className="block text-sm font-medium text-slate-700 dark:text-slate-300"
-              >
+              <label htmlFor="password" className="block text-xs font-bold text-[#183a59] uppercase tracking-wider mb-1">
                 Password
               </label>
               <input
@@ -99,16 +88,13 @@ export const AuthView = ({ onAuthenticated, ref }: React.ComponentProps<'div'> &
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                className="mt-1 block w-full rounded-lg border border-slate-300 bg-white px-4 py-2 text-slate-900 shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none dark:border-slate-600 dark:bg-slate-700 dark:text-white"
+                className="block w-full rounded-xl border border-gray-300 bg-gray-50 px-4 py-3 text-gray-900 focus:border-[#183a59] focus:ring-2 focus:ring-[#edf5fa] focus:bg-white outline-none transition-all"
                 placeholder="Enter your password"
               />
             </div>
 
             <div>
-              <label
-                htmlFor="clientName"
-                className="block text-sm font-medium text-slate-700 dark:text-slate-300"
-              >
+              <label htmlFor="clientName" className="block text-xs font-bold text-[#183a59] uppercase tracking-wider mb-1">
                 Your Name
               </label>
               <input
@@ -117,13 +103,13 @@ export const AuthView = ({ onAuthenticated, ref }: React.ComponentProps<'div'> &
                 value={clientName}
                 onChange={(e) => setClientName(e.target.value)}
                 required
-                className="mt-1 block w-full rounded-lg border border-slate-300 bg-white px-4 py-2 text-slate-900 shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none dark:border-slate-600 dark:bg-slate-700 dark:text-white"
-                placeholder="Enter your name"
+                className="block w-full rounded-xl border border-gray-300 bg-gray-50 px-4 py-3 text-gray-900 focus:border-[#183a59] focus:ring-2 focus:ring-[#edf5fa] focus:bg-white outline-none transition-all"
+                placeholder="How should the AI address you?"
               />
             </div>
 
             {error && (
-              <div className="rounded-lg bg-red-50 p-3 text-sm text-red-600 dark:bg-red-900/20 dark:text-red-400">
+              <div className="rounded-lg bg-red-50 p-3 text-sm text-red-600 border border-red-100">
                 {error}
               </div>
             )}
@@ -131,29 +117,19 @@ export const AuthView = ({ onAuthenticated, ref }: React.ComponentProps<'div'> &
             <button
               type="submit"
               disabled={loading}
-              className="group relative w-full cursor-pointer disabled:cursor-not-allowed disabled:opacity-50"
+              className="w-full bg-[#183a59] text-white py-3.5 rounded-xl font-bold hover:bg-[#112940] transition-colors shadow-lg shadow-[#183a59]/20 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {/* Outer ring/border */}
-              <div className="absolute inset-0 rounded-lg bg-gradient-to-b from-indigo-200 via-purple-200 to-indigo-300 shadow-lg"></div>
-
-              {/* Inner button */}
-              <div className="relative m-[3px] transform rounded-lg bg-gradient-to-b from-cyan-400 via-sky-500 to-blue-600 px-6 py-3 shadow-inner transition-transform duration-200 group-hover:scale-[1.02] group-active:scale-[0.98] group-disabled:scale-100">
-                <span className="font-beachday text-lg tracking-wide text-white drop-shadow-md">
-                  {loading ? 'Signing in...' : 'Sign In'}
-                </span>
-              </div>
+              {loading ? 'Authenticating...' : 'Sign In'}
             </button>
           </form>
         </div>
       </section>
 
       {/* Bottom footer */}
-      <div className="fixed bottom-4 left-0 z-10 flex w-full items-center justify-center px-4">
-        <div className="rounded-full bg-white/80 px-5 py-2.5 shadow-lg backdrop-blur-sm dark:bg-slate-800/80">
-          <p className="text-xs font-medium text-slate-600 md:text-sm dark:text-slate-300">
-            ✨ Powered by Veritas Learning Circle • Built for Students like you 💜
-          </p>
-        </div>
+      <div className="fixed bottom-6 left-0 z-10 flex w-full items-center justify-center px-4">
+        <p className="text-xs font-medium text-gray-500">
+          Powered by <span className="font-bold text-[#183a59]">Health4Travel</span>
+        </p>
       </div>
     </div>
   );

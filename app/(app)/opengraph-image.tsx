@@ -19,7 +19,7 @@ type ImageData = {
 };
 
 // Image metadata
-export const alt = 'About Acme';
+export const alt = 'Health4Travel Smart Clinic Assistant';
 export const size = {
   width: 1200,
   height: 628,
@@ -68,7 +68,12 @@ async function getImageData(uri: string, fallbackUri?: string): Promise<ImageDat
   try {
     const fileData = await loadFileData(uri);
     const buffer = Buffer.from(fileData);
-    const mimeType = mime.getType(uri);
+    
+    // Default to svg if we know it's the H4T logo, otherwise try mime
+    let mimeType = mime.getType(uri);
+    if (uri.includes('.svg')) {
+      mimeType = 'image/svg+xml';
+    }
 
     return {
       base64: `data:${mimeType};base64,${buffer.toString('base64')}`,
@@ -83,6 +88,10 @@ async function getImageData(uri: string, fallbackUri?: string): Promise<ImageDat
 }
 
 function scaleImageSize(size: { width: number; height: number }, desiredHeight: number) {
+  // Guard against division by zero if dimensions fail to load
+  if (!size || size.height === 0) {
+    return { width: desiredHeight * 3, height: desiredHeight }; // fallback aspect ratio
+  }
   const scale = desiredHeight / size.height;
   return {
     width: size.width * scale,
@@ -92,9 +101,8 @@ function scaleImageSize(size: { width: number; height: number }, desiredHeight: 
 
 function cleanPageTitle(appName: string) {
   if (appName === APP_CONFIG_DEFAULTS.pageTitle) {
-    return 'Voice agent';
+    return 'Smart Clinic Assistant';
   }
-
   return appName;
 }
 
@@ -106,9 +114,9 @@ export default async function Image() {
   const appConfig = await getAppConfig(hdrs);
 
   const pageTitle = cleanPageTitle(appConfig.pageTitle);
-  const logoUri = appConfig.logoDark || appConfig.logo;
-  const isLogoUriLocal = logoUri.includes('lk-logo');
-  const wordmarkUri = logoUri === APP_CONFIG_DEFAULTS.logoDark ? 'public/lk-wordmark.svg' : logoUri;
+  
+  // Force the Health4Travel logo for the OG Image
+  const logoUri = 'https://customer.health4travel.com/static/media/h4tLogo.3b3f9bb3bc531faa471910633d743d52.svg';
 
   // Load fonts - use file system in dev, fetch in production
   let commitMonoData: ArrayBuffer | undefined;
@@ -119,28 +127,41 @@ export default async function Image() {
     everettLightData = await loadFileData('public/everett-light.woff');
   } catch (e) {
     console.error('Failed to load fonts:', e);
-    // Continue without custom fonts - will fall back to system fonts
   }
 
-  // bg
-  const { base64: bgSrcBase64 } = await getImageData('public/opengraph-image-bg.png');
+  // Handle Background Image - Fallback to solid color if missing
+  let bgStyle: any = {
+    backgroundColor: '#183a59', // H4T Deep Blue Fallback
+  };
 
-  // wordmark
-  const { base64: wordmarkSrcBase64, dimensions: wordmarkDimensions } = isLogoUriLocal
-    ? await getImageData(wordmarkUri)
-    : await getImageData(logoUri);
-  const wordmarkSize = scaleImageSize(wordmarkDimensions, isLogoUriLocal ? 32 : 64);
+  try {
+    const { base64: bgSrcBase64 } = await getImageData('public/opengraph-image-bg.png');
+    bgStyle = {
+      backgroundImage: `url(${bgSrcBase64})`,
+      backgroundSize: '100% 100%',
+      backgroundPosition: 'center',
+      backgroundRepeat: 'no-repeat',
+    };
+  } catch (e) {
+    console.warn("Background image not found, using solid color fallback.");
+  }
 
-  // logo
-  const { base64: logoSrcBase64, dimensions: logoDimensions } = await getImageData(
-    logoUri,
-    'public/lk-logo-dark.svg'
-  );
-  const logoSize = scaleImageSize(logoDimensions, 24);
+  // Handle Logo Loading - Some SVGs fail getImageSize, so we provide fallback dimensions
+  let logoSrcBase64 = '';
+  let logoSize = { width: 300, height: 64 }; // Safe fallback size for H4T logo
+
+  try {
+    const logoData = await getImageData(logoUri);
+    logoSrcBase64 = logoData.base64;
+    logoSize = scaleImageSize(logoData.dimensions, 64);
+  } catch (e) {
+    console.error("Failed to load or parse H4T logo for OG Image.", e);
+    // If it fails, we just use the raw URL directly in the img tag
+    logoSrcBase64 = logoUri; 
+  }
 
   return new ImageResponse(
     (
-      // ImageResponse JSX element
       <div
         style={{
           display: 'flex',
@@ -148,47 +169,30 @@ export default async function Image() {
           justifyContent: 'center',
           width: size.width,
           height: size.height,
-          backgroundImage: `url(${bgSrcBase64})`,
-          backgroundSize: '100% 100%',
-          backgroundPosition: 'center',
-          backgroundRepeat: 'no-repeat',
+          ...bgStyle
         }}
       >
-        {/* wordmark */}
+        {/* wordmark / logo top left */}
         <div
           style={{
             position: 'absolute',
-            top: 30,
-            left: 30,
+            top: 40,
+            left: 40,
             display: 'flex',
             alignItems: 'center',
-            gap: 10,
-          }}
-        >
-          {/* eslint-disable-next-line jsx-a11y/alt-text */}
-          <img src={wordmarkSrcBase64} width={wordmarkSize.width} height={wordmarkSize.height} />
-        </div>
-        {/* logo */}
-        <div
-          style={{
-            position: 'absolute',
-            top: 200,
-            left: 460,
-            display: 'flex',
-            alignItems: 'center',
-            gap: 10,
           }}
         >
           {/* eslint-disable-next-line jsx-a11y/alt-text */}
           <img src={logoSrcBase64} width={logoSize.width} height={logoSize.height} />
         </div>
+        
         {/* title */}
         <div
           style={{
             position: 'absolute',
             bottom: 100,
-            left: 30,
-            width: '380px',
+            left: 40,
+            width: '600px',
             display: 'flex',
             flexDirection: 'column',
             gap: 16,
@@ -196,26 +200,26 @@ export default async function Image() {
         >
           <div
             style={{
-              backgroundColor: '#1F1F1F',
-              padding: '2px 8px',
-              borderRadius: 4,
-              width: 72,
-              fontSize: 12,
+              backgroundColor: '#34d399', // Emerald accent
+              padding: '4px 12px',
+              borderRadius: 6,
+              fontSize: 14,
               fontFamily: 'CommitMono',
               fontWeight: 600,
-              color: '#999999',
-              letterSpacing: 0.8,
+              color: '#064e3b',
+              letterSpacing: 1,
+              alignSelf: 'flex-start'
             }}
           >
-            SANDBOX
+            AI BOOKING PORTAL
           </div>
           <div
             style={{
-              fontSize: 48,
+              fontSize: 64,
               fontWeight: 300,
               fontFamily: 'Everett',
               color: 'white',
-              lineHeight: 1,
+              lineHeight: 1.1,
             }}
           >
             {pageTitle}
@@ -223,10 +227,7 @@ export default async function Image() {
         </div>
       </div>
     ),
-    // ImageResponse options
     {
-      // For convenience, we can re-use the exported opengraph-image
-      // size config to also set the ImageResponse's width and height.
       ...size,
       fonts: [
         ...(commitMonoData

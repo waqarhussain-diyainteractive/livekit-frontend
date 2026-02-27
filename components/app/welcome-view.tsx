@@ -1,76 +1,41 @@
-import { Button } from '@/components/livekit/button';
-
-function WelcomeImage() {
-  return (
-    <svg
-      width="64"
-      height="64"
-      viewBox="0 0 64 64"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      className="text-fg0 mb-4 size-16 text-white"
-    >
-      <path
-        d="M15 24V40C15 40.7957 14.6839 41.5587 14.1213 42.1213C13.5587 42.6839 12.7956 43 12 43C11.2044 43 10.4413 42.6839 9.87868 42.1213C9.31607 41.5587 9 40.7957 9 40V24C9 23.2044 9.31607 22.4413 9.87868 21.8787C10.4413 21.3161 11.2044 21 12 21C12.7956 21 13.5587 21.3161 14.1213 21.8787C14.6839 22.4413 15 23.2044 15 24ZM22 5C21.2044 5 20.4413 5.31607 19.8787 5.87868C19.3161 6.44129 19 7.20435 19 8V56C19 56.7957 19.3161 57.5587 19.8787 58.1213C20.4413 58.6839 21.2044 59 22 59C22.7956 59 23.5587 58.6839 24.1213 58.1213C24.6839 57.5587 25 56.7957 25 56V8C25 7.20435 24.6839 6.44129 24.1213 5.87868C23.5587 5.31607 22.7956 5 22 5ZM32 13C31.2044 13 30.4413 13.3161 29.8787 13.8787C29.3161 14.4413 29 15.2044 29 16V48C29 48.7957 29.3161 49.5587 29.8787 50.1213C30.4413 50.6839 31.2044 51 32 51C32.7956 51 33.5587 50.6839 34.1213 50.1213C34.6839 49.5587 35 48.7957 35 48V16C35 15.2044 34.6839 14.4413 34.1213 13.8787C33.5587 13.3161 32.7956 13 32 13ZM42 21C41.2043 21 40.4413 21.3161 39.8787 21.8787C39.3161 22.4413 39 23.2044 39 24V40C39 40.7957 39.3161 41.5587 39.8787 42.1213C40.4413 42.6839 41.2043 43 42 43C42.7957 43 43.5587 42.6839 44.1213 42.1213C44.6839 41.5587 45 40.7957 45 40V24C45 23.2044 44.6839 22.4413 44.1213 21.8787C43.5587 21.3161 42.7957 21 42 21ZM52 17C51.2043 17 50.4413 17.3161 49.8787 17.8787C49.3161 18.4413 49 19.2044 49 20V44C49 44.7957 49.3161 45.5587 49.8787 46.1213C50.4413 46.6839 51.2043 47 52 47C52.7957 47 53.5587 46.6839 54.1213 46.1213C54.6839 45.5587 55 44.7957 55 44V20C55 19.2044 54.6839 18.4413 54.1213 17.8787C53.5587 17.3161 52.7957 17 52 17Z"
-        fill="currentColor"
-      />
-    </svg>
-  );
-}
-
-interface WelcomeViewProps {
-  startButtonText: string;
-  welcomeNote: string;
-  clientName?: string;
-  onStartCall: () => void;
-}
-
 export const WelcomeView = ({
   startButtonText,
   welcomeNote,
   clientName,
   onStartCall,
   ref,
-}: React.ComponentProps<'div'> & WelcomeViewProps) => {
-  const fullWelcomeNote = clientName ? `Hi ${clientName}! ${welcomeNote}` : welcomeNote;
+}: React.ComponentProps<'div'> & { startButtonText: string; welcomeNote: string; clientName?: string; onStartCall: () => void; }) => {
+  const fullWelcomeNote = clientName ? `Hello, ${clientName}! ${welcomeNote}` : welcomeNote;
+  
   return (
     <div
       ref={ref}
-      className="fixed inset-0 h-full w-full bg-cover bg-center bg-no-repeat"
-      style={{ backgroundImage: "url('/welcome-bg-4.jpg')" }}
+      className="fixed inset-0 h-full w-full bg-[#edf5fa] flex flex-col items-center justify-center px-4"
     >
-      {/* Semi-transparent overlay for better text readability */}
-      <div className="absolute inset-0 bg-black/20" />
+      <section className="relative z-10 flex flex-col items-center justify-center text-center max-w-lg bg-white p-10 rounded-[2rem] shadow-xl border border-gray-100">
+        
+        <div className="bg-[#183a59] p-4 rounded-2xl shadow-lg mb-6">
+           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-10 h-10 text-emerald-400">
+             <path fillRule="evenodd" d="M11.25 4.533A9.707 9.707 0 006 3a9.735 9.735 0 00-3.25.555.75.75 0 00-.5.707v14.25a.75.75 0 001 .707A8.237 8.237 0 016 17.25c1.74 0 3.354.536 4.688 1.44a.75.75 0 00.824 0A8.237 8.237 0 0116.25 17.25c1.74 0 3.354.536 4.688 1.44a.75.75 0 001-.707V4.262a.75.75 0 00-.5-.707A9.735 9.735 0 0018 3a9.707 9.707 0 00-5.25 1.533.75.75 0 00-.75 0zM12 8.25a.75.75 0 01.75.75v1.5h1.5a.75.75 0 010 1.5h-1.5v1.5a.75.75 0 01-1.5 0v-1.5h-1.5a.75.75 0 010-1.5h1.5V9a.75.75 0 01.75-.75z" clipRule="evenodd" />
+           </svg>
+        </div>
 
-      <section className="relative z-10 flex h-full flex-col items-center justify-center px-4 text-center">
-        <WelcomeImage />
-
-        <p className="font-mochibop-demo pt-1 text-2xl leading-7 font-medium text-white md:max-w-[80%] md:text-3xl lg:max-w-[40%]">
+        <h1 className="text-2xl font-bold text-[#183a59] mb-3">
+          Smart Clinic Assistant
+        </h1>
+        
+        <p className="text-[15px] leading-relaxed text-gray-600 mb-8">
           {fullWelcomeNote}
         </p>
 
-        {/* Custom styled button matching reference design */}
-        <button onClick={onStartCall} className="group relative mt-6 cursor-pointer">
-          {/* Outer ring/border - light purple */}
-          <div className="absolute inset-0 rounded-full bg-gradient-to-b from-indigo-200 via-purple-200 to-indigo-300 shadow-lg"></div>
-
-          {/* Inner button with blue gradient */}
-          <div className="relative m-[6px] transform rounded-full bg-gradient-to-b from-cyan-400 via-sky-500 to-blue-600 px-14 py-3 shadow-inner transition-transform duration-200 group-hover:scale-[1.02] group-active:scale-[0.98]">
-            <span className="font-beachday text-xl tracking-widest text-white drop-shadow-md">
-              {startButtonText}
-            </span>
-          </div>
+        <button 
+          onClick={onStartCall} 
+          className="bg-[#183a59] text-white px-10 py-4 rounded-full font-bold text-lg hover:bg-[#112940] hover:scale-105 transition-all shadow-lg shadow-[#183a59]/20 flex items-center gap-3"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5"><path d="M8.25 4.5a3.75 3.75 0 117.5 0v8.25a3.75 3.75 0 01-7.5 0V4.5z" /><path d="M6 10.5a.75.75 0 01.75.75v1.5a5.25 5.25 0 1010.5 0v-1.5a.75.75 0 011.5 0v1.5a6.751 6.751 0 01-6 6.854v2.146h2.25a.75.75 0 010 1.5h-6a.75.75 0 010-1.5h2.25v-2.146a6.751 6.751 0 01-6-6.854v-1.5a.75.75 0 01.75-.75z" /></svg>
+          {startButtonText}
         </button>
       </section>
-
-      {/* Bottom footer - made friendlier */}
-      <div className="fixed bottom-4 left-0 z-10 flex w-full items-center justify-center px-4">
-        <div className="rounded-full bg-white/80 px-5 py-2.5 shadow-lg backdrop-blur-sm dark:bg-slate-800/80">
-          <p className="text-xs font-medium text-slate-600 md:text-sm dark:text-slate-300">
-            ✨ Powered by Veritas Learning Circle • Built for Students like you 💜
-          </p>
-        </div>
-      </div>
     </div>
   );
 };
