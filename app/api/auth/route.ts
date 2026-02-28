@@ -19,14 +19,14 @@ export async function POST(req: Request) {
 
     // Parse request body
     const body = await req.json();
-    const { username, password, clientName } = body;
+    const { username, password } = body;
 
     // Validate request parameters
-    if (!username || !password || !clientName) {
+    if (!username || !password) {
       return NextResponse.json(
         {
           success: false,
-          message: 'Missing required fields: username, password, or clientName',
+          message: 'Missing required fields: username or password',
         },
         { status: 400 }
       );
@@ -37,7 +37,7 @@ export async function POST(req: Request) {
       return NextResponse.json({
         success: true,
         message: 'Authentication successful',
-        clientName: clientName,
+        clientName: username, // Return username just in case the app expects a clientName field
       });
     } else {
       return NextResponse.json(

@@ -32,23 +32,17 @@ export async function POST(req: Request) {
     // Parse agent configuration from request body
     const body = await req.json();
     const agentName: string = body?.room_config?.agents?.[0]?.agent_name;
-    const clientName: string = body?.clientName || 'user';
-
-    console.log('Connection details request - clientName:', clientName);
 
     // Generate participant token
-    const participantName = clientName;
+    const participantName = 'Patient';
     const participantIdentity = `voice_assistant_user_${Math.floor(Math.random() * 10_000)}`;
     const roomName = `voice_assistant_room_${Math.floor(Math.random() * 10_000)}`;
 
     const participantToken = await createParticipantToken(
       { identity: participantIdentity, name: participantName },
       roomName,
-      agentName,
-      clientName
+      agentName
     );
-
-    console.log('Created token with metadata for clientName:', clientName);
 
     // Return connection details
     const data: ConnectionDetails = {
@@ -57,9 +51,11 @@ export async function POST(req: Request) {
       participantToken: participantToken,
       participantName,
     };
+    
     const headers = new Headers({
       'Cache-Control': 'no-store',
     });
+    
     return NextResponse.json(data, { headers });
   } catch (error) {
     if (error instanceof Error) {
@@ -72,20 +68,12 @@ export async function POST(req: Request) {
 function createParticipantToken(
   userInfo: AccessTokenOptions,
   roomName: string,
-  agentName?: string,
-  clientName?: string
+  agentName?: string
 ): Promise<string> {
   const at = new AccessToken(API_KEY, API_SECRET, {
     ...userInfo,
     ttl: '15m',
   });
-
-  // Add clientName to metadata
-  if (clientName) {
-    const metadata = { clientName };
-    at.metadata = JSON.stringify(metadata);
-    console.log('Setting participant metadata:', metadata);
-  }
 
   const grant: VideoGrant = {
     room: roomName,
@@ -94,6 +82,7 @@ function createParticipantToken(
     canPublishData: true,
     canSubscribe: true,
   };
+  
   at.addGrant(grant);
 
   if (agentName) {

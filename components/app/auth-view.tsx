@@ -3,13 +3,12 @@
 import { useState } from 'react';
 
 interface AuthViewProps {
-  onAuthenticated: (clientName: string) => void;
+  onAuthenticated: (username: string) => void;
 }
 
 export const AuthView = ({ onAuthenticated, ref }: React.ComponentProps<'div'> & AuthViewProps) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [clientName, setClientName] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
@@ -22,13 +21,14 @@ export const AuthView = ({ onAuthenticated, ref }: React.ComponentProps<'div'> &
       const response = await fetch('/api/auth', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, password, clientName }),
+        body: JSON.stringify({ username, password }),
       });
 
       const data = await response.json();
 
       if (data.success) {
-        onAuthenticated(clientName);
+        // Pass the username to the agent so it knows what to call the user
+        onAuthenticated(username);
       } else {
         setError(data.message || 'Authentication failed');
       }
@@ -90,21 +90,6 @@ export const AuthView = ({ onAuthenticated, ref }: React.ComponentProps<'div'> &
                 required
                 className="block w-full rounded-xl border border-gray-300 bg-gray-50 px-4 py-3 text-gray-900 focus:border-[#183a59] focus:ring-2 focus:ring-[#edf5fa] focus:bg-white outline-none transition-all"
                 placeholder="Enter your password"
-              />
-            </div>
-
-            <div>
-              <label htmlFor="clientName" className="block text-xs font-bold text-[#183a59] uppercase tracking-wider mb-1">
-                Your Name
-              </label>
-              <input
-                type="text"
-                id="clientName"
-                value={clientName}
-                onChange={(e) => setClientName(e.target.value)}
-                required
-                className="block w-full rounded-xl border border-gray-300 bg-gray-50 px-4 py-3 text-gray-900 focus:border-[#183a59] focus:ring-2 focus:ring-[#edf5fa] focus:bg-white outline-none transition-all"
-                placeholder="How should the AI address you?"
               />
             </div>
 

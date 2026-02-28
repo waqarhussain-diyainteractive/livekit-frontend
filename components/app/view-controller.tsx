@@ -32,27 +32,26 @@ const VIEW_MOTION_PROPS = {
 
 interface ViewControllerProps {
   appConfig: AppConfig;
-  clientName: string | null;
-  onAuthenticated: (clientName: string) => void;
+  username: string | null;
+  onAuthenticated: (username: string) => void;
 }
 
-export function ViewController({ appConfig, clientName, onAuthenticated }: ViewControllerProps) {
+export function ViewController({ appConfig, username, onAuthenticated }: ViewControllerProps) {
   const { isConnected, start } = useSessionContext();
 
   return (
     <AnimatePresence mode="wait">
       {/* Auth view */}
-      {!clientName && (
+      {!username && (
         <MotionAuthView key="auth" {...VIEW_MOTION_PROPS} onAuthenticated={onAuthenticated} />
       )}
       {/* Welcome view */}
-      {clientName && !isConnected && (
+      {username && !isConnected && (
         <MotionWelcomeView
           key="welcome"
           {...VIEW_MOTION_PROPS}
           startButtonText={appConfig.startButtonText}
           welcomeNote={appConfig.welcomeNote}
-          clientName={clientName}
           onStartCall={start}
         />
       )}
