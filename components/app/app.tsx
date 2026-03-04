@@ -29,8 +29,8 @@ interface AppProps {
 }
 
 export function App({ appConfig }: AppProps) {
-  // We track the username just so the app knows the user successfully logged in
-  const [username, setUsername] = useState<string | null>(null);
+  // We initialize this with 'Guest' (or any name) so the app automatically bypasses the login screen
+  const [username, setUsername] = useState<string | null>('Guest');
 
   const tokenSource = useMemo(() => {
     if (typeof process.env.NEXT_PUBLIC_CONN_DETAILS_ENDPOINT === 'string') {

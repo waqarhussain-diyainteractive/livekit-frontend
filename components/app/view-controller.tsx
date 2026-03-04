@@ -1,25 +1,18 @@
 'use client';
 
-import { useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import { useSessionContext } from '@livekit/components-react';
 import type { AppConfig } from '@/app-config';
-import { AuthView } from '@/components/app/auth-view';
 import { SessionView } from '@/components/app/session-view';
 import { WelcomeView } from '@/components/app/welcome-view';
 
-const MotionAuthView = motion.create(AuthView);
 const MotionWelcomeView = motion.create(WelcomeView);
 const MotionSessionView = motion.create(SessionView);
 
 const VIEW_MOTION_PROPS = {
   variants: {
-    visible: {
-      opacity: 1,
-    },
-    hidden: {
-      opacity: 0,
-    },
+    visible: { opacity: 1 },
+    hidden: { opacity: 0 },
   },
   initial: 'hidden',
   animate: 'visible',
@@ -41,12 +34,8 @@ export function ViewController({ appConfig, username, onAuthenticated }: ViewCon
 
   return (
     <AnimatePresence mode="wait">
-      {/* Auth view */}
-      {!username && (
-        <MotionAuthView key="auth" {...VIEW_MOTION_PROPS} onAuthenticated={onAuthenticated} />
-      )}
-      {/* Welcome view */}
-      {username && !isConnected && (
+      {/* Welcome view - directly show this if not connected */}
+      {!isConnected && (
         <MotionWelcomeView
           key="welcome"
           {...VIEW_MOTION_PROPS}
@@ -55,6 +44,7 @@ export function ViewController({ appConfig, username, onAuthenticated }: ViewCon
           onStartCall={start}
         />
       )}
+      
       {/* Session view */}
       {isConnected && (
         <MotionSessionView key="session-view" {...VIEW_MOTION_PROPS} appConfig={appConfig} />
