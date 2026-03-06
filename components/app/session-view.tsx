@@ -92,7 +92,7 @@ export const SessionView = ({ appConfig, ...props }: React.ComponentProps<'secti
           } catch (e) {
             console.error("Disconnection error:", e);
           }
-        }, 8000);
+        }, 15000);
       }
     } catch (e) {
       console.error("Error parsing DataChannel message:", e);
