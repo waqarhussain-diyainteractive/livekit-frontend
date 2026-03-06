@@ -85,14 +85,14 @@ export const SessionView = ({ appConfig, ...props }: React.ComponentProps<'secti
       if (data.type === 'show_ticket') {
         setActiveTicket(data.ticket);
       }
-      if (data.ticket?.status === "CONFIRMED ✅") {
+      if (data.ticket?.status === "CONFIRMED") {
         setTimeout(() => {
           try {
             session.end();
           } catch (e) {
             console.error("Disconnection error:", e);
           }
-        }, 15000);
+        }, 12000);
       }
     } catch (e) {
       console.error("Error parsing DataChannel message:", e);
