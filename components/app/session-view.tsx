@@ -58,7 +58,6 @@ export const SessionView = ({ appConfig, ...props }: React.ComponentProps<'secti
   
   // --- UI STATE DEFINITIONS ---
   const [activeImage, setActiveImage] = useState<{ url: string; title: string } | null>(null);
-  // NEW: Added the missing state definitions for the Clinic UI!
   const [activeSlots, setActiveSlots] = useState<any[] | null>(null);
   const [activeTicket, setActiveTicket] = useState<any | null>(null);
 
@@ -80,12 +79,20 @@ export const SessionView = ({ appConfig, ...props }: React.ComponentProps<'secti
       if (data.type === 'close_image') {
         setActiveImage(null);
       }
-      // NEW HANDLERS FOR CLINIC ASSISTANT
       if (data.type === 'show_slots') {
         setActiveSlots(data.slots);
       }
       if (data.type === 'show_ticket') {
         setActiveTicket(data.ticket);
+      }
+      if (data.ticket?.status === "CONFIRMED ✅") {
+        setTimeout(() => {
+          try {
+            session.end();
+          } catch (e) {
+            console.error("Disconnection error:", e);
+          }
+        }, 8000);
       }
     } catch (e) {
       console.error("Error parsing DataChannel message:", e);
@@ -122,6 +129,15 @@ export const SessionView = ({ appConfig, ...props }: React.ComponentProps<'secti
       className="relative z-10 h-full w-full overflow-hidden bg-gradient-to-br from-[oklch(0.98_0.02_280)] via-[oklch(0.97_0.03_200)] to-[oklch(0.98_0.02_150)]"
       {...props}
     >
+      {/* Floating Health4Travel Logo */}
+      <div className="absolute top-6 left-6 z-50">
+        <img 
+          src="https://customer.health4travel.com/static/media/h4tLogo.3b3f9bb3bc531faa471910633d743d52.svg" 
+          alt="Health4Travel Logo" 
+          className="h-8 md:h-10 drop-shadow-sm" 
+        />
+      </div>
+
       {/* Chat Transcript */}
       <div className={cn('fixed inset-0 grid grid-cols-1 grid-rows-1', !chatOpen && 'pointer-events-none')}>
         <Fade top className="absolute inset-x-4 top-0 h-40" />
